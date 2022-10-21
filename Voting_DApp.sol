@@ -55,7 +55,7 @@ contract Poll
             }));
         }
     }
-
+    // this gives the moderator the ability to approve people to vote for the poll
     function allowAccessToVote(address member) public 
     {
         require (msg.sender == moderator,
@@ -67,17 +67,19 @@ contract Poll
         
         voters[member]didVote = 1;
     }
-     function vote(uint256 consideration) public
+     function didVote(uint256 consideration) public
         {
-            Members storage sender c = voters[msg.sender];
-            require(!sender.voterAccess, 'You have already voted for the poll');
+            Members storage sender c = voters[msg.sender]; /
             require(sender.didVote !=0, 'This poll has already been voted on and your access has been removed');
-            sender.voted = true;
-            sender.vote = consideration;
+            require(!sender.voterAccess, 'You have already voted for the poll');
+            
+            sender.didVote = consideration;
+            sender.voterAccess = true;
 
-            ideas[idea].ticketNumb = considerations[consideration].ticketNumb + sender.didVote;
+            considerations[consideration].ticketNumb = considerations[consideration].ticketNumb + sender.didVote;
         }
 
+        // this function will show how many many votes the winning artist had
         function theSuperiorCArtist()public view returns (uint256 theSuperiorArtist_) 
         {  
             uint256 highestVoteCount = 0;
@@ -91,6 +93,7 @@ contract Poll
             }
         }
 
+        // this function shows the name of the artist that was picked
         function superiorArtist() public view returns (string superiorArtist_) 
         {
             superiorArtist_ = considerations[superiorArtist()].name;
